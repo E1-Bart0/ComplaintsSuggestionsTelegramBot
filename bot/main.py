@@ -9,7 +9,7 @@ from telegram.ext import (
     MessageHandler,
     Updater,
 )
-from bot.handlers import echo, help_command, parse_callback, start
+from bot.handlers import echo, help_command, parse_callback, start, delete_yourself
 
 logging.basicConfig(level=logging.INFO)
 load_dotenv()
@@ -27,9 +27,9 @@ def main():
 
     # on different commands - answer in Telegram
     dispatcher.add_handler(CommandHandler("start", start))
+    dispatcher.add_handler(CommandHandler("exit", delete_yourself))
     dispatcher.add_handler(CommandHandler("help", help_command))
     dispatcher.add_handler(CallbackQueryHandler(parse_callback))
-    dispatcher.add_handler()
 
     # on non command i.e message - echo the message on Telegram
     dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
