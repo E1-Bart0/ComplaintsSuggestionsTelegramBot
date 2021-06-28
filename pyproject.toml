@@ -1,7 +1,6 @@
 [tool.black]
 include = '\.pyi?$'
 exclude = '.venv'
-line-length = 119
 
 [tool.isort]
 profile = "black"

@@ -1,17 +1,19 @@
-from collections import defaultdict
-
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Message, Update
 from telegram.ext import CallbackContext
 
-DATABASE = {}
-MESSAGES = defaultdict(set)
-M = {}
+from bot.db.core import session_scope
+from bot.db.services import (
+    create_user_in_db,
+    delete_user_from_db,
+    get_all_users_from_db,
+)
 
 
 def start(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /start is issued."""
-    user_id = update.effective_user.id
-    DATABASE[user_id] = update.message.chat.id
+    user = update.effective_user
+    with session_scope() as session:
+        create_user_in_db(session, user)
     update.message.reply_text(
         """
         Привет!
@@ -22,8 +24,9 @@ def start(update: Update, context: CallbackContext) -> None:
 
 
 def delete_yourself(update: Update, context: CallbackContext):
-    user_id = update.effective_user.id
-    DATABASE.pop(user_id)
+    user = update.effective_user
+    with session_scope() as session:
+        delete_user_from_db(session, user)
     update.message.reply_text("Вы успешно удалили себя")
 
 
@@ -40,13 +43,19 @@ def echo(update: Update, context: CallbackContext) -> None:
             InlineKeyboardButton("Жалоба", callback_data="complaint"),
         ],
         [
-            InlineKeyboardButton("Анонимное\nСообщение", callback_data="anonymous message"),
+            InlineKeyboardButton(
+                "Анонимное\nСообщение", callback_data="anonymous message"
+            ),
             InlineKeyboardButton("Отмена", callback_data="stop"),
         ],
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     message_id = update.message.message_id
-    update.message.reply_text(text="Передать в группу как:", reply_markup=reply_markup, reply_to_message_id=message_id)
+    update.message.reply_text(
+        text="Передать в группу как:",
+        reply_markup=reply_markup,
+        reply_to_message_id=message_id,
+    )
 
 
 def parse_callback(update: Update, context: CallbackContext) -> None:
@@ -63,54 +72,15 @@ def parse_callback(update: Update, context: CallbackContext) -> None:
     elif query.data == "anonymous message":
         header = "😎 НОВОЕ АНОНИМНОЕ СООБЩЕНИЕ 😎"
         reply_msg_to_group(update, query.message.reply_to_message, header)
-    elif query.data == "like":
-        upgrade_likes_on_messages(update, query.message, like=True)
-        return
-    elif query.data == "dislike":
-        upgrade_likes_on_messages(update, query.message, like=False)
-        return
-    elif query.data == "none":
-        return
     query.delete_message()
-
-
-def upgrade_likes_on_messages(update: Update, message: Message, like: bool = True):
-    msg, values = find_msg__msgs(message)
-    like_or_dislike = "like" if like else "dislike"
-    message_in_db = M[msg]
-    message_in_db[like_or_dislike] += 1
-    keyboard = [
-        [
-            InlineKeyboardButton(f"👍 {message_in_db['like']}", callback_data="like"),
-            InlineKeyboardButton(f"👎🏿 {message_in_db['dislike']}", callback_data="dislike"),
-        ],
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    for msg in values:
-        update.message = msg
-        update.message.edit_reply_markup(reply_markup=reply_markup)
-
-
-def find_msg__msgs(message):
-    for msg, values in MESSAGES.items():
-        if message in values:
-            return msg, values
 
 
 def reply_msg_to_group(update: Update, message: Message, header):
     """Sending message to Group as a suggestion"""
-    keyboard = [
-        [
-            InlineKeyboardButton("👍 0", callback_data="like"),
-            InlineKeyboardButton("👎🏿 0", callback_data="dislike"),
-        ],
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
 
-    for chat in DATABASE.values():
-        message.chat.id = chat
-        update.message = message
+    with session_scope() as session:
+        for user in get_all_users_from_db(session):
+            message.chat.id = user.chat_id
+            update.message = message
 
-        new_message = update.message.reply_text(text=f"**{header}**\n\n{message.text}", reply_markup=reply_markup)
-        MESSAGES[message.message_id].add(new_message)
-        M[message.message_id] = {"like": 0, "dislike": 0}
+            update.message.reply_text(text=f"**{header}**\n\n{message.text}")

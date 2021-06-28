@@ -18,7 +18,20 @@ max-cognitive-complexity = 7
 per-file-ignores =
     # No docs and annotation required for tests
     test*.py: D10, D101, D103, S101, ANN
+
     # Skip unused imports in __init__ files
     __init__.py: F401
+    base.py: F401
+
+    # Skip class attribute as a python builtins in DB models
+    models.py: A003
+
+    # Skip import not at top
+    env.py: E402
+
+    # Skip argument "id" is shadowing a python builtin
+    models.py: A002
+
+
 
 doctests = True

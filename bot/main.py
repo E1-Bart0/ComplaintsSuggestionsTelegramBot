@@ -9,12 +9,12 @@ from telegram.ext import (
     MessageHandler,
     Updater,
 )
-from bot.handlers import echo, help_command, parse_callback, start, delete_yourself
+
+from bot.handlers import delete_yourself, echo, help_command, parse_callback, start
 
 logging.basicConfig(level=logging.INFO)
 load_dotenv()
 API_TOKEN = os.getenv("TELEGRAM_API_TOKEN")
-CHAT_ID = os.getenv("GROUP_ID")
 
 
 def main():

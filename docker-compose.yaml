@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+
+  db:
+    image: postgres:13
+    restart: always
+    env_file:
+      - .env
+    expose:
+      - ${DB_PORT}
+    ports:
+      - ${DB_HOST}:${DB_PORT}:5432
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "10m"
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+
+
+volumes:
+  db_volume:
+    external: false

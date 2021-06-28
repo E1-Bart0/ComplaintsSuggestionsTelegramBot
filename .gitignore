@@ -1,3 +1,16 @@
-.idea
-.env
-*env
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Unit test / coverage reports
+htmlcov/
+.coverage
+coverage.xml
+.pytest_cache/
+
+# Environments
+*env/
+
+# Pycharm
+.idea/
