@@ -7,10 +7,10 @@ from services.password_encrypting import generate_hash_for_password, check_passw
 from .core import Session
 from .models import User, Config
 
-PASSWORD = os.getenv("TELEGRAM_API_TOKEN", "1111")
+PASSWORD = os.getenv("SU_PASSWORD", "1111")
 
 
-def create_user_in_db(session: Session, user: TelegramUser) -> User:
+def get_or_create_user_in_db(session: Session, user: TelegramUser) -> User:
     """Creating instance of TelegramUser in db"""
     if instance := find_user_in_db(session, user):  # noqa: ASN001
         return instance
@@ -65,3 +65,14 @@ def check_superuser_password(session: Session, password: str) -> bool:
         config = create_new_superuser_password(session)
     hashed_password = config.superuser_password
     return check_password(password, hashed_password)
+
+
+def update_to_superuser_of_password_correct(
+    session: Session, password: str, telegram_user: TelegramUser
+) -> Optional[bool]:
+    user = get_or_create_user_in_db(session, telegram_user)
+    if check_superuser_password(session, password):
+        user.is_superuser = True
+        session.commit()
+        return True
+    return False

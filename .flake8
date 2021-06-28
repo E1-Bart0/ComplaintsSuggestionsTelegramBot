@@ -12,6 +12,7 @@ ignore = E203, E501, W503,  # handled by black
 exclude =
     .*
     *env
+    */versions/*
 
 
 max-cognitive-complexity = 7

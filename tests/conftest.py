@@ -4,6 +4,7 @@ import sys
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
+from telegram import User as TelegramUser
 
 sys.path.append(
     os.path.join(os.path.normpath(os.path.dirname(os.path.dirname(__file__))), "bot")
@@ -43,3 +44,16 @@ def db_session(_setup_database, connection):
         sessionmaker(autocommit=False, autoflush=False, bind=connection)
     )
     transaction.rollback()
+
+
+@pytest.fixture()
+def telegram_user():
+    user_info = {
+        "is_bot": False,
+        "id": 1111,
+        "first_name": "John",
+        "last_name": "Doe",
+        "language_code": "en",
+        "username": "python_test",
+    }
+    return TelegramUser(**user_info)

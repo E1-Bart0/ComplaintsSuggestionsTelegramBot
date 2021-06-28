@@ -3,9 +3,10 @@ from telegram.ext import CallbackContext
 
 from db.core import session_scope
 from db.services import (
-    create_user_in_db,
+    get_or_create_user_in_db,
     delete_user_from_db,
     get_all_users_from_db,
+    update_to_superuser_of_password_correct,
 )
 
 
@@ -13,7 +14,7 @@ def start(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /start is issued."""
     user = update.effective_user
     with session_scope() as session:
-        create_user_in_db(session, user)
+        get_or_create_user_in_db(session, user)
     update.message.reply_text(
         """
         Привет!
@@ -25,14 +26,27 @@ def start(update: Update, context: CallbackContext) -> None:
 
 
 def alter_su_privileges(update: Update, context: CallbackContext):
-    pass
+    user = update.effective_user
+    password = update.message.text[4:]
+    with session_scope() as session:
+        if update_to_superuser_of_password_correct(session, password, user):
+            update.message.reply_text(
+                "Теперь Вы Супер пользователь и можете видеть все жалобы и предложения."
+                "Пожалуйста. Наслаждайтесь"
+            )
+        else:
+            update.message.reply_text("Не корректный пароль")
 
 
 def delete_yourself(update: Update, context: CallbackContext):
     user = update.effective_user
     with session_scope() as session:
-        delete_user_from_db(session, user)
-    update.message.reply_text("Вы успешно удалили себя")
+        if delete_user_from_db(session, user):
+            update.message.reply_text("Вы успешно удалили себя")
+        else:
+            update.message.reply_text(
+                "Что-то пошло не так. Скорее всего Вас не было в БД"
+            )
 
 
 def help_command(update: Update, context: CallbackContext) -> None:

@@ -1,27 +1,11 @@
-import pytest
-from telegram import User as TelegramUser
-
 from db.models import User
 from db.services import (
-    create_user_in_db,
+    get_or_create_user_in_db,
     find_user_in_db,
     delete_user_from_db,
     get_all_users_from_db,
     get_all_superusers_from_db,
 )
-
-
-@pytest.fixture()
-def telegram_user():
-    user_info = {
-        "is_bot": False,
-        "id": 1111,
-        "first_name": "John",
-        "last_name": "Doe",
-        "language_code": "en",
-        "username": "python_test",
-    }
-    return TelegramUser(**user_info)
 
 
 def test_find_user_in_db__works(db_session, telegram_user):
@@ -39,7 +23,7 @@ def test_find_user_in_db__but_user_do_not_exists(db_session, telegram_user):
 
 
 def test_creating_user(db_session, telegram_user):
-    user = create_user_in_db(db_session, telegram_user)
+    user = get_or_create_user_in_db(db_session, telegram_user)
     all_users = db_session.query(User).all()
     assert all_users == [user]
 
@@ -47,8 +31,8 @@ def test_creating_user(db_session, telegram_user):
 def test_create_user__but_user_already_exists__do_not_created_user(
     db_session, telegram_user
 ):
-    create_user_in_db(db_session, telegram_user)
-    create_user_in_db(db_session, telegram_user)
+    get_or_create_user_in_db(db_session, telegram_user)
+    get_or_create_user_in_db(db_session, telegram_user)
     all_users = db_session.query(User).all()
     assert len(all_users) == 1
 
