@@ -17,6 +17,7 @@ from handlers import (
     parse_callback,
     start,
     alter_su_privileges,
+    change_su_password,
 )
 
 logging.basicConfig(level=logging.INFO)
@@ -34,9 +35,10 @@ def main():
 
     # on different commands - answer in Telegram
     dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(CommandHandler("exit", delete_yourself))
+    dispatcher.add_handler(CommandHandler("del", delete_yourself))
     dispatcher.add_handler(CommandHandler("help", help_command))
     dispatcher.add_handler(CommandHandler("su", alter_su_privileges))
+    dispatcher.add_handler(CommandHandler("new_su_password", change_su_password))
     dispatcher.add_handler(CallbackQueryHandler(parse_callback))
 
     # on non command i.e message - echo the message on Telegram

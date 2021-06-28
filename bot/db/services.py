@@ -1,5 +1,5 @@
 import os
-from typing import Optional, Sequence
+from typing import Optional, Sequence, Union
 
 from telegram import User as TelegramUser
 
@@ -46,9 +46,12 @@ def get_all_superusers_from_db(session: Session) -> Sequence[User]:
     return session.query(User).filter_by(is_superuser=True).all()
 
 
-def create_new_superuser_password(session: Session) -> Config:
+def create_new_superuser_password(
+    session: Session, password: Optional[str] = None
+) -> Config:
     config = session.query(Config).first()
-    superuser_password = generate_hash_for_password(PASSWORD)
+    password = password or PASSWORD
+    superuser_password = generate_hash_for_password(password)
 
     if config:
         config.superuser_password = superuser_password
@@ -60,14 +63,18 @@ def create_new_superuser_password(session: Session) -> Config:
 
 
 def check_superuser_password(session: Session, password: str) -> bool:
-    config = session.query(Config).first()
-    if config is None:
-        config = create_new_superuser_password(session)
-    hashed_password = config.superuser_password
+    hashed_password = get_or_create_su_password(session)
     return check_password(password, hashed_password)
 
 
-def update_to_superuser_of_password_correct(
+def get_or_create_su_password(session: Session) -> str:
+    config = session.query(Config).first()
+    if config is None:
+        config = create_new_superuser_password(session)
+    return config.superuser_password
+
+
+def update_to_superuser_if_password_correct(
     session: Session, password: str, telegram_user: TelegramUser
 ) -> Optional[bool]:
     user = get_or_create_user_in_db(session, telegram_user)
@@ -75,4 +82,14 @@ def update_to_superuser_of_password_correct(
         user.is_superuser = True
         session.commit()
         return True
+    return False
+
+
+def change_su_password_in_db(
+    session: Session, telegram_user: TelegramUser, password: str
+) -> Union[str, bool]:
+    user = get_or_create_user_in_db(session, telegram_user)
+    if user.is_superuser:
+        create_new_superuser_password(session, password)
+        return password
     return False
