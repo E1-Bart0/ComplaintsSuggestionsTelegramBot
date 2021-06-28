@@ -1,4 +1,4 @@
-from bot.db.core.connect_to_db import (
+from db.core.connect_to_db import (
     Base,
     Session,
     engine,

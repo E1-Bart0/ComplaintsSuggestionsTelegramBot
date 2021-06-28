@@ -14,3 +14,6 @@ coverage.xml
 
 # Pycharm
 .idea/
+
+# env
+.env

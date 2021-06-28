@@ -10,7 +10,14 @@ from telegram.ext import (
     Updater,
 )
 
-from bot.handlers import delete_yourself, echo, help_command, parse_callback, start
+from handlers import (
+    delete_yourself,
+    echo,
+    help_command,
+    parse_callback,
+    start,
+    alter_su_privileges,
+)
 
 logging.basicConfig(level=logging.INFO)
 load_dotenv()
@@ -29,6 +36,7 @@ def main():
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("exit", delete_yourself))
     dispatcher.add_handler(CommandHandler("help", help_command))
+    dispatcher.add_handler(CommandHandler("su", alter_su_privileges))
     dispatcher.add_handler(CallbackQueryHandler(parse_callback))
 
     # on non command i.e message - echo the message on Telegram
