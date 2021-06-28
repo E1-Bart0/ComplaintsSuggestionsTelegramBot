@@ -2,13 +2,13 @@ from unittest.mock import patch
 
 from db.models import Config, User
 from db.services import (
-    create_new_superuser_password,
     check_superuser_password,
-    update_to_superuser_if_password_correct,
+    create_new_superuser_password,
     get_or_create_user_in_db,
-    change_su_password,
+    update_to_superuser_if_password_correct,
+    change_su_password_in_db,
 )
-from services.password_encrypting import generate_hash_for_password, check_password
+from services.password_encrypting import check_password, generate_hash_for_password
 
 
 def test_generate_hash_for_password():
@@ -122,7 +122,7 @@ def test_change_su_password_works__user_is_super_user(telegram_user, db_session)
     db_session.add(user)
     db_session.commit()
 
-    result = change_su_password(db_session, telegram_user, "1234")
+    result = change_su_password_in_db(db_session, telegram_user, "1234")
     assert result == "1234"
 
 
@@ -133,5 +133,5 @@ def test_change_su_password_works__user_is_not_super_user(telegram_user, db_sess
     db_session.add(user)
     db_session.commit()
 
-    result = change_su_password(db_session, telegram_user, "1234")
+    result = change_su_password_in_db(db_session, telegram_user, "1234")
     assert not result

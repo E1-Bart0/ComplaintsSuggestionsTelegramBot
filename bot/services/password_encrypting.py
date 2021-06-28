@@ -1,6 +1,6 @@
 from typing import Union
 
-from bcrypt import hashpw, gensalt, checkpw
+from bcrypt import checkpw, gensalt, hashpw
 
 
 def generate_hash_for_password(password: str) -> str:

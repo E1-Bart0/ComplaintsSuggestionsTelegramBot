@@ -1,10 +1,10 @@
 from db.models import User
 from db.services import (
-    get_or_create_user_in_db,
-    find_user_in_db,
     delete_user_from_db,
-    get_all_users_from_db,
+    find_user_in_db,
     get_all_superusers_from_db,
+    get_all_users_from_db,
+    get_or_create_user_in_db,
 )
 
 

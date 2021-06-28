@@ -2,22 +2,21 @@ import logging
 import os
 
 from dotenv import load_dotenv
+from handlers import (
+    alter_su_privileges,
+    change_su_password,
+    delete_yourself_from_db,
+    echo,
+    help_command,
+    parse_callback,
+    start,
+)
 from telegram.ext import (
     CallbackQueryHandler,
     CommandHandler,
     Filters,
     MessageHandler,
     Updater,
-)
-
-from handlers import (
-    delete_yourself,
-    echo,
-    help_command,
-    parse_callback,
-    start,
-    alter_su_privileges,
-    change_su_password,
 )
 
 logging.basicConfig(level=logging.INFO)
@@ -35,7 +34,7 @@ def main():
 
     # on different commands - answer in Telegram
     dispatcher.add_handler(CommandHandler("start", start))
-    dispatcher.add_handler(CommandHandler("del", delete_yourself))
+    dispatcher.add_handler(CommandHandler("del", delete_yourself_from_db))
     dispatcher.add_handler(CommandHandler("help", help_command))
     dispatcher.add_handler(CommandHandler("su", alter_su_privileges))
     dispatcher.add_handler(CommandHandler("new_su_password", change_su_password))

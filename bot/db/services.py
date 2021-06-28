@@ -1,11 +1,11 @@
 import os
 from typing import Optional, Sequence, Union
 
+from services.password_encrypting import check_password, generate_hash_for_password
 from telegram import User as TelegramUser
 
-from services.password_encrypting import generate_hash_for_password, check_password
 from .core import Session
-from .models import User, Config
+from .models import Config, User
 
 PASSWORD = os.getenv("SU_PASSWORD", "1111")
 
