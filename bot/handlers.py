@@ -3,6 +3,7 @@ from db.services import (
     delete_user_from_db,
     get_all_superusers_from_db,
     get_or_create_user_in_db,
+    create_user_as_admin_if_no_more_users_in_db,
 )
 from handlers_for_admin import (
     add_user_to_admin_group,
@@ -32,7 +33,7 @@ def start(update: Update, context: CallbackContext) -> None:
     """Send a message when the command /start is issued."""
     user = update.effective_user
     with session_scope() as session:
-        get_or_create_user_in_db(session, user)
+        create_user_as_admin_if_no_more_users_in_db(session, user)
     update.message.reply_text(start_message(user.full_name))
 
 

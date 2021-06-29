@@ -1,13 +1,22 @@
 import os
 from typing import Optional, Sequence, Union
 
-from services.password_encrypting import check_password, generate_hash_for_password
 from telegram import User as TelegramUser
 
+from services.password_encrypting import check_password, generate_hash_for_password
 from .core import Session
 from .models import Config, User
 
 PASSWORD = os.getenv("SU_PASSWORD", "1111")
+
+
+def create_user_as_admin_if_no_more_users_in_db(session: Session, user: TelegramUser):
+    all_users_count = session.query(User).count()
+    user = get_or_create_user_in_db(session, user)
+    if not all_users_count:
+        user.is_admin = True
+        session.commit()
+    return user
 
 
 def get_or_create_user_in_db(session: Session, user: TelegramUser) -> User:

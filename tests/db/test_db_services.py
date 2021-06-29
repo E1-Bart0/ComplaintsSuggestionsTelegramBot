@@ -9,6 +9,7 @@ from db.services import (
     get_all_non_su_from_db,
     get_all_non_admins_from_db,
     set_remove_status_from_user,
+    create_user_as_admin_if_no_more_users_in_db,
 )
 
 
@@ -211,3 +212,20 @@ def test_set_remove_status_from_user__but_user_already_is_superuser(db_session):
     assert user
     assert user.is_superuser
     assert db_session.query(User).first().is_superuser
+
+
+def test_create_user_as_admin_if_no_more_users_in_db__no_more_users(
+    db_session, telegram_user
+):
+    user = create_user_as_admin_if_no_more_users_in_db(db_session, telegram_user)
+    assert user.is_admin
+
+
+def test_create_user_as_admin_if_no_more_users_in_db__user_not_first(
+    db_session, telegram_user
+):
+    user = User(id=1, first_name="John")
+    db_session.add(user)
+    db_session.commit()
+    user = create_user_as_admin_if_no_more_users_in_db(db_session, telegram_user)
+    assert not user.is_admin
