@@ -9,10 +9,10 @@ install_linters:
 
 
 migrate:
-	alembic upgrade head
+	cd bot/db/ && alembic upgrade head
 
 makemigrations:
-	alembic revision --autogenerate
+	cd bot/db/ && alembic revision --autogenerate
 
 
 init_db:
@@ -21,3 +21,6 @@ init_db:
 
 init_test_db:
 	docker-compose up --build test_db
+
+make run_bot:
+	docker-compose up --build run_bot

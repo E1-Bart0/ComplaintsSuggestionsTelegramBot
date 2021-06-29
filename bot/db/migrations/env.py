@@ -4,9 +4,12 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
-sys.path = ["", "../.."] + sys.path[1:]
-from bot.db.core import get_url_to_db
-from bot.db.core.base import Base
+from os.path import abspath, dirname
+
+sys.path.insert(0, dirname(dirname(dirname(abspath(__file__)))))  # Insert <.>/src
+
+from db.core import get_url_to_db
+from db.core.base import Base
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
