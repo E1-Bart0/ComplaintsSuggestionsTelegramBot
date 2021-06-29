@@ -53,9 +53,6 @@ class User(Base):
             "is_bot": self.is_bot,
         }
 
-    def to_dict(self) -> dict:
-        return self.as_dict
-
     def __repr__(self):
         return str(self.as_dict)
 

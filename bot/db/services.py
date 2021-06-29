@@ -64,6 +64,7 @@ def get_all_non_su_from_db(session: Session) -> Sequence[User]:
 def create_new_superuser_password(
     session: Session, password: Optional[str] = None
 ) -> Config:
+    """Create Or Change new SU password in DB"""
     config = session.query(Config).first()
     password = password or PASSWORD
     superuser_password = generate_hash_for_password(password)
@@ -78,11 +79,13 @@ def create_new_superuser_password(
 
 
 def check_superuser_password(session: Session, password: str) -> bool:
+    """Check if password correct"""
     hashed_password = get_or_create_su_password(session)
     return check_password(password, hashed_password)
 
 
 def get_or_create_su_password(session: Session) -> str:
+    """Find password in DB or Create New One"""
     config = session.query(Config).first()
     if config is None:
         config = create_new_superuser_password(session)
@@ -92,6 +95,8 @@ def get_or_create_su_password(session: Session) -> str:
 def update_to_superuser_if_password_correct(
     session: Session, password: str, telegram_user: TelegramUser
 ) -> Optional[bool]:
+    """Update user to SU if his password correct"""
+
     user = get_or_create_user_in_db(session, telegram_user)
     if check_superuser_password(session, password):
         user.is_superuser = True
@@ -103,6 +108,7 @@ def update_to_superuser_if_password_correct(
 def change_su_password_in_db(
     session: Session, telegram_user: TelegramUser, password: str
 ) -> Union[str, bool]:
+    """Change password in Config in DB"""
     user = get_or_create_user_in_db(session, telegram_user)
     if user.is_superuser:
         create_new_superuser_password(session, password)
@@ -111,11 +117,12 @@ def change_su_password_in_db(
 
 
 def set_remove_status_from_user(
-    session: Session, user_id: int, status: str, set_status: bool
+    session: Session, user_id: int, status: str, new_value: bool
 ) -> Optional[User]:
+    """SET status with value to User"""
     user = session.query(User).filter_by(id=user_id).first()
     if user:
-        setattr(user, status, set_status)
+        setattr(user, status, new_value)
         session.commit()
         return user
     return None
