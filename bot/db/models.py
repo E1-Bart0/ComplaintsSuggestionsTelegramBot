@@ -12,8 +12,9 @@ class User(Base):
     last_name = Column(String(40), nullable=True)
     username = Column(String(40), nullable=True)
 
-    is_bot = Column(Boolean, default=False)
-    is_superuser = Column(Boolean, default=False)
+    is_bot = Column(Boolean, default=False, nullable=False)
+    is_superuser = Column(Boolean, default=False, nullable=False)
+    is_admin = Column(Boolean, default=False, nullable=False)
 
     # unique constraints across multiple columns and Indexing by name, year, author
 
@@ -24,6 +25,7 @@ class User(Base):
         last_name: Optional[str] = None,
         username: Optional[str] = None,
         is_superuser: Optional[bool] = False,
+        is_admin: Optional[bool] = False,
         is_bot: Optional[bool] = False,
     ):
         self.id = id
@@ -31,7 +33,14 @@ class User(Base):
         self.last_name = last_name
         self.username = username
         self.is_superuser = is_superuser
+        self.is_admin = is_admin
         self.is_bot = is_bot
+
+    @hybrid_property
+    def full_name(self) -> str:
+        if self.last_name:
+            return f"{self.first_name} {self.last_name}"
+        return self.first_name
 
     @hybrid_property
     def as_dict(self) -> dict:
@@ -43,6 +52,9 @@ class User(Base):
             "is_superuser": self.is_superuser,
             "is_bot": self.is_bot,
         }
+
+    def to_dict(self) -> dict:
+        return self.as_dict
 
     def __repr__(self):
         return str(self.as_dict)

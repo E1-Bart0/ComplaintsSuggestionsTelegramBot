@@ -46,6 +46,21 @@ def get_all_superusers_from_db(session: Session) -> Sequence[User]:
     return session.query(User).filter_by(is_superuser=True).all()
 
 
+def get_all_admins_from_db(session: Session) -> Sequence[User]:
+    """Returns all Users with admin permissions from db"""
+    return session.query(User).filter_by(is_admin=True).all()
+
+
+def get_all_non_admins_from_db(session: Session) -> Sequence[User]:
+    """Returns all Users without admin permissions from db"""
+    return session.query(User).filter_by(is_admin=False).all()
+
+
+def get_all_non_su_from_db(session: Session) -> Sequence[User]:
+    """Returns all Users without su permissions from db"""
+    return session.query(User).filter_by(is_superuser=False).all()
+
+
 def create_new_superuser_password(
     session: Session, password: Optional[str] = None
 ) -> Config:
@@ -93,3 +108,14 @@ def change_su_password_in_db(
         create_new_superuser_password(session, password)
         return password
     return False
+
+
+def set_remove_status_from_user(
+    session: Session, user_id: int, status: str, set_status: bool
+) -> Optional[User]:
+    user = session.query(User).filter_by(id=user_id).first()
+    if user:
+        setattr(user, status, set_status)
+        session.commit()
+        return user
+    return None

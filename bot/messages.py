@@ -1,9 +1,16 @@
+from typing import Sequence
+
 from telegram import InlineKeyboardButton
+
+from db.models import User
 
 SUGGESTION_HEADER = "😍 НОВОЕ ПРЕДЛОЖЕНИЕ 😍"
 COMPLAINT_HEADER = "🤬 НОВАЯ ЖАЛОБА 🤬"
 ANONYMOUS_MSG_HEADER = "😎 НОВОЕ АНОНИМНОЕ СООБЩЕНИЕ 😎"
 NEW_PASSWORD_HEADER = "👀 Новый пароль для Суперпользователь 👀"  # noqa: S105
+ALL_USERS_HEADER = "Список всех пользователей"
+ALL_SU_HEADER = "Список всех суперпользователей"
+ALL_ADMIN_HEADER = "Список всех администраторов"
 
 
 def combine_header_and_msg(header, message):
@@ -20,16 +27,32 @@ def start_message(user_name: str) -> str:
     )
 
 
-def help_message() -> str:
+def help_message_for_admin() -> str:
+    return (
+        "📌Справка по командам администратора\n"
+        "- /all - Посмотреть всех пользователей;\n"
+        "- /all_su - Посмотреть всех Суперпользователей;\n"
+        "- /all_admin - Посмотреть всех Администраторов;\n"
+        "- /add_su - Добавить Суперпользователя;\n"
+        "- /remove_su - Удалить Суперпользователя;\n"
+        "- /add_admin - Добавить Администратора;\n"
+        "- /remove_admin - Удалить Администратора;\n"
+    )
+
+
+def help_message(user: User) -> str:
+    additional_text = help_message_for_admin() if user.is_admin else ""
     return (
         "🤗 Справка 🤗\n\n"
         "Жалобы и предложения могут видеть только Суперпользователи SU.\n\n"
-        "📌Справка по командам\n"
+        "📌Справка по командам\n\n"
         "- /start - Добавляет пользователя в БД;\n"
         "- /del - Удаляет пользователя из БД;\n"
         "- /help - Выводит это сообщение. Справка;\n"
         "- /su <password> - Стать SU для просмотра всех Жалоб и Предложений;\n"
+        "📌Справка по командам суперпользователя\n"
         "- /new_su_password <new_password> - Изменить пароль для SU, только активные SU могут менять пароль;\n"
+        f"{additional_text}"
         "\n Спасибо за внимание!"
     )
 
@@ -39,6 +62,22 @@ def became_su_message() -> str:
         "🦸 Теперь Вы Суперпользователь 🦸\n\n"
         "Вы можете видеть все жалобы и предложения.\nПожалуйста. Наслаждайтесь🥂"
     )
+
+
+def became_non_su_message() -> str:
+    return "🦸 Теперь Вы Не Суперпользователь 🦸\n\n"
+
+
+def became_admin_message() -> str:
+    return (
+        "🦸 Теперь Вы Администратор 🦸\n\n"
+        "Вы можете использовать скрытые команды.\n"
+        "Для просмотра команд введите /help"
+    )
+
+
+def became_non_admin_message() -> str:
+    return "🦸 Теперь Вы Не Администратор 🦸\n\n"
 
 
 def password_validation_message(password: str) -> str:
@@ -83,8 +122,59 @@ def successful_changed_password_message(password: str) -> str:
     return f"Пароль был успешно изменен на новый:\n\n{password}"
 
 
-def filed_change_password_message() -> str:
+def filed_message() -> str:
     return "🤖 Что-то пошло не так 🤖"
+
+
+def get_all_members_message(members: Sequence[User], header: str) -> str:
+    all_members = (
+        f"{member.full_name}"
+        f'{" =SU= " if member.is_superuser else ""}'
+        f'{" *Admin* " if member.is_admin else ""}'
+        for member in members
+    )
+    all_members_str = "\n".join(all_members)
+    return f"{header}\n\nИмя пользователя\n{all_members_str}"
+
+
+def get_username(member: User) -> str:
+    return f"{member.full_name}"
+
+
+def not_members_message():
+    return "Нет пользователей"
+
+
+def user_became_su_message(user: User):
+    return f"{user.full_name} Теперь Суперпользователь"
+
+
+def add_to_su_message():
+    return "Кого хотите Добавить в Суперпользователи"
+
+
+def remove_from_su_message():
+    return "Кого хотите Удалить из Суперпользователей"
+
+
+def add_to_admin_message():
+    return "Кого хотите Добавить в Администраторы"
+
+
+def remove_from_admin_message():
+    return "Кого хотите Удалить из Администраторов"
+
+
+def user_became_not_su_message(user: User):
+    return f"{user.full_name} Больше Не Суперпользователь"
+
+
+def user_became_admin_message(user: User):
+    return f"{user.full_name} Теперь Администратор"
+
+
+def user_became_not_admin_message(user: User):
+    return f"{user.full_name} Больше Не Администратор"
 
 
 ON_CHANGE_PASSWORD_KEYBOARD_1 = [
