@@ -24,7 +24,9 @@ make run_bot
 
 ```shell script
 cd <PATH_TO_PROJECT>
+
 # set up your environments variables in .env file
+cp .env.template .env
 
 # Create TEST DB in Docker
 make init_test_db
