@@ -7,7 +7,7 @@ from db.models import User
 SUGGESTION_HEADER = "😍 НОВОЕ ПРЕДЛОЖЕНИЕ 😍"
 COMPLAINT_HEADER = "🤬 НОВАЯ ЖАЛОБА 🤬"
 ANONYMOUS_MSG_HEADER = "😎 НОВОЕ АНОНИМНОЕ СООБЩЕНИЕ 😎"
-NEW_PASSWORD_HEADER = "👀 Новый пароль для Суперпользователь 👀"  # noqa: S105
+NEW_PASSWORD_HEADER = "👀 Новый пароль для Суперпользователей 👀"  # noqa: S105
 ALL_USERS_HEADER = "Список всех пользователей"
 ALL_SU_HEADER = "Список всех суперпользователей"
 ALL_ADMIN_HEADER = "Список всех администраторов"
@@ -175,6 +175,22 @@ def user_became_admin_message(user: User):
 
 def user_became_not_admin_message(user: User):
     return f"{user.full_name} Больше Не Администратор"
+
+
+def you_send_suggestion_message():
+    return "Ваше Предложение отправлено"
+
+
+def you_send_complaint_message():
+    return "Ваша Жалоба отправлена"
+
+
+def you_send_anonymous_message():
+    return "Ваше Анонимное сообщение отправлено"
+
+
+def you_success_send_message():
+    return "Сообщение было отправлено"
 
 
 ON_CHANGE_PASSWORD_KEYBOARD_1 = [

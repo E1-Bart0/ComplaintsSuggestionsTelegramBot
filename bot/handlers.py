@@ -24,6 +24,10 @@ from messages import (
     on_delete_message,
     on_failed_deleted_message,
     start_message,
+    you_success_send_message,
+    you_send_anonymous_message,
+    you_send_complaint_message,
+    you_send_suggestion_message,
 )
 from telegram import InlineKeyboardMarkup, Message, Update
 from telegram.ext import CallbackContext
@@ -73,15 +77,32 @@ def parse_callback(update: Update, context: CallbackContext) -> None:  # noqa: C
     query.answer()
 
     if query.data == "suggestion":
-        reply_msg_to_group(update, query.message.reply_to_message, SUGGESTION_HEADER)
+        reply_msg_to_group(
+            update,
+            query.message.reply_to_message,
+            SUGGESTION_HEADER,
+            you_send_suggestion_message(),
+        )
     elif query.data == "complaint":
-        reply_msg_to_group(update, query.message.reply_to_message, COMPLAINT_HEADER)
+        reply_msg_to_group(
+            update,
+            query.message.reply_to_message,
+            COMPLAINT_HEADER,
+            you_send_complaint_message(),
+        )
     elif query.data == "anonymous message":
-        reply_msg_to_group(update, query.message.reply_to_message, ANONYMOUS_MSG_HEADER)
+        reply_msg_to_group(
+            update,
+            query.message.reply_to_message,
+            ANONYMOUS_MSG_HEADER,
+            you_send_anonymous_message(),
+        )
     elif query.data == "confirm_change_password":
         confirm_change_password(update, query)
     elif query.data == "info_about_changing":
-        reply_msg_to_group(update, query.message, NEW_PASSWORD_HEADER)
+        reply_msg_to_group(
+            update, query.message, NEW_PASSWORD_HEADER, you_success_send_message()
+        )
     elif "add_su" in query.data:
         add_user_to_su_group(query, query.data)
     elif "add_admin" in query.data:
@@ -95,11 +116,17 @@ def parse_callback(update: Update, context: CallbackContext) -> None:  # noqa: C
     query.delete_message()
 
 
-def reply_msg_to_group(update: Update, message: Message, header):
+def reply_msg_to_group(
+    update: Update, message: Message, header: str, success_text: str
+):
     """Sending message to all SuperUser"""
-
+    main_chat_id = message.chat.id
     with session_scope() as session:
         for user in get_all_superusers_from_db(session):
             message.chat.id = user.id
             update.message = message
             update.message.reply_text(combine_header_and_msg(header, message))
+
+    update.message = message
+    update.message.chat.id = main_chat_id
+    update.message.reply_text(success_text)
