@@ -1,5 +1,6 @@
 deploy:
 	git pull
+	make run_bot
 
 
 install_requirements:
