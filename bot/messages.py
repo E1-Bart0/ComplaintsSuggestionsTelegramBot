@@ -53,9 +53,7 @@ def help_message(user: User) -> str:
 
 
 def became_su_message() -> str:
-    return (
-        "Теперь ты суперпользователь. Я буду передавать тебе все сообщения."
-    )
+    return "Теперь ты суперпользователь. Я буду передавать тебе все сообщения."
 
 
 def became_non_su_message() -> str:
@@ -63,9 +61,7 @@ def became_non_su_message() -> str:
 
 
 def became_admin_message() -> str:
-    return (
-        "Теперь ты администратор. Открыт доступ к скрытым командам. /help"
-    )
+    return "Теперь ты администратор. Открыт доступ к скрытым командам. /help"
 
 
 def became_non_admin_message() -> str:
@@ -73,9 +69,7 @@ def became_non_admin_message() -> str:
 
 
 def password_validation_message(password: str) -> str:
-    return (
-        "Неверный пароль `{password}"
-    )
+    return "Неверный пароль `{password}"
 
 
 def wrong_new_password_message(password: str) -> str:

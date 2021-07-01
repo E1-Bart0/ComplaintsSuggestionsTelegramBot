@@ -1,9 +1,9 @@
 from db.core import session_scope
 from db.services import (
+    create_user_as_admin_if_no_more_users_in_db,
     delete_user_from_db,
     get_all_superusers_from_db,
     get_or_create_user_in_db,
-    create_user_as_admin_if_no_more_users_in_db,
 )
 from handlers_for_admin import (
     add_user_to_admin_group,
