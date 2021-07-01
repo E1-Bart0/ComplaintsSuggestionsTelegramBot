@@ -24,10 +24,10 @@ from messages import (
     on_delete_message,
     on_failed_deleted_message,
     start_message,
-    you_success_send_message,
     you_send_anonymous_message,
     you_send_complaint_message,
     you_send_suggestion_message,
+    you_success_send_message,
 )
 from telegram import InlineKeyboardMarkup, Message, Update
 from telegram.ext import CallbackContext

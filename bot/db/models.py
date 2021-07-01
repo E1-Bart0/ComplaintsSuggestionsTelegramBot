@@ -1,8 +1,9 @@
 from typing import Optional
 
-from .core.connect_to_db import Base
 from sqlalchemy import Boolean, Column, Integer, String
 from sqlalchemy.ext.hybrid import hybrid_property
+
+from .core.connect_to_db import Base
 
 
 class User(Base):

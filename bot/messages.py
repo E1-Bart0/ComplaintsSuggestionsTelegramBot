@@ -1,8 +1,7 @@
 from typing import Sequence
 
-from telegram import InlineKeyboardButton
-
 from db.models import User
+from telegram import InlineKeyboardButton
 
 SUGGESTION_HEADER = "😍 НОВОЕ ПРЕДЛОЖЕНИЕ 😍"
 COMPLAINT_HEADER = "🤬 НОВАЯ ЖАЛОБА 🤬"

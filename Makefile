@@ -1,3 +1,7 @@
+deploy:
+	git pull
+
+
 install_requirements:
 	pip install -r ./.requirements/common.txt
 
@@ -23,4 +27,4 @@ init_test_db:
 	docker-compose up --build test_db
 
 make run_bot:
-	docker-compose up --build run_bot
+	docker-compose up -d --build run_bot

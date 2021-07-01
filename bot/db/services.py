@@ -1,9 +1,9 @@
 import os
 from typing import Optional, Sequence, Union
 
+from services.password_encrypting import check_password, generate_hash_for_password
 from telegram import User as TelegramUser
 
-from services.password_encrypting import check_password, generate_hash_for_password
 from .core import Session
 from .models import Config, User
 

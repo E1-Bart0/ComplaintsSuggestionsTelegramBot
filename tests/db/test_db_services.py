@@ -1,15 +1,15 @@
 from db.models import User
 from db.services import (
+    create_user_as_admin_if_no_more_users_in_db,
     delete_user_from_db,
     find_user_in_db,
+    get_all_admins_from_db,
+    get_all_non_admins_from_db,
+    get_all_non_su_from_db,
     get_all_superusers_from_db,
     get_all_users_from_db,
     get_or_create_user_in_db,
-    get_all_admins_from_db,
-    get_all_non_su_from_db,
-    get_all_non_admins_from_db,
     set_remove_status_from_user,
-    create_user_as_admin_if_no_more_users_in_db,
 )
 
 

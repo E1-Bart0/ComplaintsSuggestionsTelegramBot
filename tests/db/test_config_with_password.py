@@ -2,11 +2,11 @@ from unittest.mock import patch
 
 from db.models import Config, User
 from db.services import (
+    change_su_password_in_db,
     check_superuser_password,
     create_new_superuser_password,
     get_or_create_user_in_db,
     update_to_superuser_if_password_correct,
-    change_su_password_in_db,
 )
 from services.password_encrypting import check_password, generate_hash_for_password
 
