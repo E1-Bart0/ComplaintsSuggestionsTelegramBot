@@ -17,7 +17,7 @@ def get_url_to_db():
     db_name = os.getenv("TEST_DB_NAME", "test")
     db_user = os.getenv("TEST_DB_USER", "test")
     db_password = os.getenv("TEST_DB_PASSWORD", "test")
-    db_port = os.getenv("TEST_DB_PORT", "65432")
+    db_port = os.getenv("TEST_DB_PORT", "65433")
     db_host = os.getenv("TEST_DB_HOST", "127.0.0.1")
     db_type = os.getenv("TEST_DB_TYPE", "postgresql")
     return f"{db_type}://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"

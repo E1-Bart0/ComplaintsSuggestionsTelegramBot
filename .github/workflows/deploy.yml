@@ -21,7 +21,7 @@ jobs:
           POSTGRES_USER: test
           POSTGRES_PASSWORD: test
         ports:
-          - 127.0.0.1:65432:5432
+          - 127.0.0.1:7543:5432
         # Set health checks to wait until postgres has started
         options:
           --health-cmd pg_isready
@@ -63,7 +63,7 @@ jobs:
           TEST_DB_NAME: test
           TEST_DB_USER: test
           TEST_DB_PASSWORD: test
-          TEST_DB_PORT: 65432
+          TEST_DB_PORT: 7543
 
       - name: pwd
         run: |
@@ -77,5 +77,5 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           port: 22
           script: |
-            cd ~/PycharmProjects/test_workflow/
+            cd /var/lib/ComplaintsSuggestionsTelegramBot/
             make deploy
